@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HerSafe 💜</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #16001f, #4b0875, #ff4fc3);
+    color: white;
+    text-align: center;
+    overflow-x: hidden;
+}
+
+
+/* =========================================
+   BACKGROUND GLOW
+========================================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    background: rgba(255, 105, 220, 0.25);
+    border-radius: 50%;
+    filter: blur(100px);
+    top: -150px;
+    left: -150px;
+    animation: backgroundGlow 5s infinite alternate;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    width: 450px;
+    height: 450px;
+    background: rgba(170, 80, 255, 0.25);
+    border-radius: 50%;
+    filter: blur(100px);
+    bottom: -150px;
+    right: -150px;
+    animation: backgroundGlow 6s infinite alternate-reverse;
+    pointer-events: none;
+}
+
+
+/* =========================================
+   THREE LINE MENU BUTTON
+========================================= */
+
+.menu-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255,255,255,0.3);
+
+    background: rgba(30, 0, 45, 0.55);
+
+    backdrop-filter: blur(10px);
+
+    color: white;
+
+    font-size: 27px;
+
+    cursor: pointer;
+
+    z-index: 2000;
+
+    box-shadow:
+        0 0 12px rgba(255,79,195,0.4);
+
+    transition: 0.3s;
+}
+
+.menu-button:hover {
+    transform: scale(1.08);
+
+    background: rgba(255,79,195,0.3);
+
+    box-shadow:
+        0 0 25px #ff4fc3;
+}
+
+
+/* =========================================
+   DARK MENU BACKGROUND
+========================================= */
+
+.menu-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(10, 0, 20, 0.65);
+
+    backdrop-filter: blur(5px);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition: 0.3s;
+
+    z-index: 1500;
+}
+
+.menu-overlay.open {
+    opacity: 1;
+
+    visibility: visible;
+}
+
+
+/* =========================================
+   SIDE MENU
+========================================= */
+
+.side-menu {
+    position: fixed;
+
+    top: 0;
+    right: -360px;
+
+    width: 340px;
+    max-width: 90%;
+
+    height: 100vh;
+
+    padding: 90px 25px 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(45, 0, 65, 0.98),
+            rgba(18, 0, 28, 0.98)
+        );
+
+    border-left: 1px solid rgba(255,255,255,0.15);
+
+    box-shadow:
+        -10px 0 40px rgba(0,0,0,0.45),
+        -5px 0 30px rgba(255,79,195,0.15);
+
+    backdrop-filter: blur(15px);
+
+    z-index: 1800;
+
+    transition: right 0.4s ease;
+
+    overflow-y: auto;
+}
+
+
+/* OPEN MENU */
+
+.side-menu.open {
+    right: 0;
+}
+
+
+/* =========================================
+   MENU TITLE
+========================================= */
+
+.menu-title {
+    font-size: 32px;
+
+    font-weight: bold;
+
+    margin-bottom: 8px;
+
+    color: #ff8de1;
+
+    text-shadow:
+        0 0 10px #ff8de1,
+        0 0 25px #ff4fc3,
+        0 0 40px #b700ff;
+}
+
+.menu-subtitle {
+    font-size: 14px;
+
+    opacity: 0.7;
+
+    margin-bottom: 30px;
+}
+
+
+/* =========================================
+   MENU LINKS
+========================================= */
+
+.menu-link {
+    display: block;
+
+    width: 100%;
+
+    margin: 12px 0;
+
+    padding: 15px 18px;
+
+    border-radius: 18px;
+
+    border: 1px solid rgba(255,255,255,0.15);
+
+    background: rgba(255,255,255,0.08);
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.menu-link:hover {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,79,195,0.3),
+            rgba(155,53,255,0.3)
+        );
+
+    transform: translateX(-4px);
+
+    box-shadow:
+        0 0 15px rgba(255,79,195,0.2);
+}
+
+
+/* =========================================
+   HERSAFE PASS
+========================================= */
+
+.pass-section {
+    margin-top: 25px;
+
+    padding: 20px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,79,195,0.12),
+            rgba(155,53,255,0.12)
+        );
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    box-shadow:
+        0 0 20px rgba(255,79,195,0.08);
+}
+
+.pass-title {
+    font-size: 21px;
+
+    font-weight: bold;
+
+    color: #ff9be4;
+
+    margin-bottom: 8px;
+}
+
+.pass-description {
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    opacity: 0.75;
+
+    margin-bottom: 15px;
+}
+
+.pass-button {
+    display: block;
+
+    width: 100%;
+
+    padding: 12px;
+
+    border: none;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4fc3,
+            #9b35ff
+        );
+
+    color: white;
+
+    font-weight: bold;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 15px rgba(255,79,195,0.35);
+
+    transition: 0.3s;
+}
+
+.pass-button:hover {
+    transform: scale(1.03);
+
+    box-shadow:
+        0 0 25px rgba(255,79,195,0.6);
+}
+
+.pass-status {
+    margin-top: 12px;
+
+    font-size: 13px;
+
+    opacity: 0.8;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================
+   TITLE
+========================================= */
+
+.title {
+    font-size: clamp(45px, 10vw, 80px);
+    font-weight: bold;
+    margin-bottom: 10px;
+
+    text-shadow:
+        0 0 10px #ff8de1,
+        0 0 25px #ff4fc3,
+        0 0 45px #b700ff;
+
+    animation: titleGlow 2.5s infinite alternate;
+}
+
+.subtitle {
+    font-size: 20px;
+    opacity: 0.9;
+    margin-bottom: 50px;
+
+    animation: fadeDown 1.5s ease forwards;
+}
+
+
+/* =========================================
+   MAIN IMAGE
+========================================= */
+
+.injury-image {
+    width: 100%;
+    max-width: 650px;
+
+    border-radius: 25px;
+
+    display: block;
+
+    margin: 0 auto;
+
+    box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.3),
+        0 0 45px rgba(255, 79, 195, 0.7);
+
+    opacity: 0;
+
+    transform:
+        translateY(60px)
+        scale(0.9);
+
+    animation:
+        imageEnter 1.5s ease forwards;
+
+    animation-delay: 0.5s;
+}
+
+
+/* =========================================
+   FIRST TEXT
+========================================= */
+
+.main-message {
+    font-size: clamp(24px, 5vw, 38px);
+
+    font-weight: bold;
+
+    line-height: 1.3;
+
+    margin: 40px auto 30px;
+
+    max-width: 750px;
+
+    opacity: 0;
+
+    transform: translateY(40px);
+
+    animation:
+        textAppear 1.2s ease forwards;
+
+    animation-delay: 1.8s;
+
+    text-shadow:
+        0 0 10px #ff8de1,
+        0 0 25px #ff4fc3;
+}
+
+
+/* =========================================
+   AI BUTTON
+========================================= */
+
+.ai-button {
+    display: inline-block;
+
+    text-decoration: none;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4fc3,
+            #9b35ff
+        );
+
+    padding: 18px 40px;
+
+    border-radius: 50px;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    margin-top: 10px;
+
+    opacity: 0;
+
+    transform:
+        translateY(40px)
+        scale(0.8);
+
+    animation:
+        buttonAppear 1.2s ease forwards,
+        buttonGlow 2s infinite alternate;
+
+    animation-delay:
+        3.2s,
+        4.5s;
+
+    box-shadow:
+        0 0 15px #ff4fc3,
+        0 0 35px #b700ff;
+
+    transition:
+        transform 0.3s ease;
+}
+
+.ai-button:hover {
+    transform: scale(1.08);
+}
+
+.ai-button:active {
+    transform: scale(0.95);
+}
+
+
+/* =========================================
+   SECOND TEXT
+========================================= */
+
+.ai-message {
+    font-size: clamp(18px, 4vw, 25px);
+
+    line-height: 1.5;
+
+    max-width: 700px;
+
+    margin: 35px auto 0;
+
+    opacity: 0;
+
+    transform: translateY(40px);
+
+    animation:
+        textAppear 1.2s ease forwards;
+
+    animation-delay: 4.2s;
+
+    text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.8),
+        0 0 20px #ff4fc3;
+}
+
+
+/* =========================================
+   SMALL HEART
+========================================= */
+
+.heart {
+    font-size: 30px;
+
+    margin-top: 35px;
+
+    animation:
+        heartBeat 1.5s infinite;
+}
+
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes imageEnter {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            translateY(60px)
+            scale(0.9);
+
+        filter: blur(8px);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+        filter: blur(0);
+    }
+
+}
+
+
+@keyframes textAppear {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            translateY(40px);
+
+        filter: blur(6px);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+        filter: blur(0);
+    }
+
+}
+
+
+@keyframes buttonAppear {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            translateY(40px)
+            scale(0.8);
+    }
+
+    70% {
+        transform:
+            translateY(-8px)
+            scale(1.05);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+@keyframes buttonGlow {
+
+    0% {
+        box-shadow:
+            0 0 15px #ff4fc3,
+            0 0 30px #b700ff;
+    }
+
+    100% {
+        box-shadow:
+            0 0 30px #ff8de1,
+            0 0 65px #b700ff;
+    }
+
+}
+
+
+@keyframes titleGlow {
+
+    from {
+        text-shadow:
+            0 0 10px #ff8de1,
+            0 0 25px #ff4fc3;
+    }
+
+    to {
+        text-shadow:
+            0 0 20px #ffb8ed,
+            0 0 45px #ff4fc3,
+            0 0 70px #b700ff;
+    }
+
+}
+
+
+@keyframes backgroundGlow {
+
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.3);
+    }
+
+}
+
+
+@keyframes fadeDown {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(-25px);
+    }
+
+    to {
+        opacity: 0.9;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+@keyframes heartBeat {
+
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.25);
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .container {
+        padding: 40px 15px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+
+        margin-bottom: 35px;
+    }
+
+    .injury-image {
+        border-radius: 18px;
+    }
+
+    .main-message {
+        margin-top: 30px;
+    }
+
+    .ai-button {
+        font-size: 18px;
+
+        padding:
+            15px 30px;
+    }
+
+    .ai-message {
+        margin-top: 25px;
+    }
+
+    .menu-button {
+        top: 12px;
+        right: 12px;
+
+        width: 48px;
+        height: 48px;
+    }
+
+    .side-menu {
+        width: 320px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<!-- =========================================
+     THREE LINE BUTTON
+========================================= -->
+
+<button
+    class="menu-button"
+    id="menuButton"
+    onclick="toggleMenu()"
+    aria-label="Open HerSafe menu">
+
+    ☰
+
+</button>
+
+
+<!-- =========================================
+     DARK OVERLAY
+========================================= -->
+
+<div
+    class="menu-overlay"
+    id="menuOverlay"
+    onclick="closeMenu()">
+</div>
+
+
+<!-- =========================================
+     SIDE MENU
+========================================= -->
+
+<div
+    class="side-menu"
+    id="sideMenu">
+
+    <div class="menu-title">
+        HerSafe 💜
+    </div>
+
+    <div class="menu-subtitle">
+        Your HerSafe menu
+    </div>
+
+
+    <a
+        class="menu-link"
+        href="homepage101.html">
+
+        🏠 Home
+
+    </a>
+
+
+    <a
+        class="menu-link"
+        href="hersafeai.html">
+
+        🤖 HerSafe AI
+
+    </a>
+
+
+    <a
+        class="menu-link"
+        href="introduction.html">
+
+        📚 Learn & Quiz
+
+    </a>
+
+
+    <!-- HERSAFE PASS -->
+
+    <div class="pass-section">
+
+        <div class="pass-title">
+            👤 HerSafe Pass
+        </div>
+
+        <div class="pass-description">
+
+            Create a username so HerSafe can remember
+            your progress on this device.
+
+        </div>
+
+
+        <!-- THIS NOW GOES DIRECTLY TO THE PAGE -->
+
+        <a
+            class="pass-button"
+            href="managehersafepass.html">
+
+            Sign Up / Login
+
+        </a>
+
+
+        <div
+            class="pass-status"
+            id="passStatus">
+
+            Not signed in
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     MAIN PAGE
+========================================= -->
+
+<div class="container">
+
+    <div class="title">
+        HerSafe 💜
+    </div>
+
+
+    <div class="subtitle">
+        Learn. Protect. Understand.
+    </div>
+
+
+    <!-- Image -->
+
+    <img
+        class="injury-image"
+        src="https://i.ibb.co/GfyM4sgT/0684b7abe17a584b2a42d1dc7d975d7c.jpg"
+        alt="Football shin pads"
+    >
+
+
+    <!-- First text -->
+
+    <div class="main-message">
+
+        Shin pads are great and all but they won't
+        protect you from injuries.
+
+    </div>
+
+
+    <!-- HerSafe AI button -->
+
+    <a
+        class="ai-button"
+        href="hersafeai.html">
+
+        HerSafe AI 💜
+
+    </a>
+
+
+    <!-- AI text -->
+
+    <div class="ai-message">
+
+        Stuck / lost / don't know what to do?
+
+        <br>
+
+        Our HerSafe chat can help you with
+        science-backed answers!
+
+    </div>
+
+
+    <div class="heart">
+        💜
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   MENU
+========================================= */
+
+function toggleMenu() {
+
+    const menu =
+        document.getElementById("sideMenu");
+
+    const overlay =
+        document.getElementById("menuOverlay");
+
+    menu.classList.toggle("open");
+
+    overlay.classList.toggle("open");
+
+}
+
+
+function closeMenu() {
+
+    const menu =
+        document.getElementById("sideMenu");
+
+    const overlay =
+        document.getElementById("menuOverlay");
+
+    menu.classList.remove("open");
+
+    overlay.classList.remove("open");
+
+}
+
+
+/* =========================================
+   HERSAFE PASS STATUS
+========================================= */
+
+function updatePassStatus() {
+
+    const username =
+        localStorage.getItem("herSafeUsername");
+
+
+    const status =
+        document.getElementById("passStatus");
+
+
+    if (username) {
+
+        status.innerHTML =
+            "Signed in as <strong>" +
+            escapeHTML(username) +
+            "</strong> 💜";
+
+    } else {
+
+        status.textContent =
+            "Not signed in";
+
+    }
+
+}
+
+
+/* =========================================
+   PROTECT USERNAME DISPLAY
+========================================= */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+updatePassStatus();
+
+</script>
+
+</body>
+</html>
