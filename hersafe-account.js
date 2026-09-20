@@ -1,692 +1,641 @@
-/* =========================================
-   HERSAFE ACCOUNT SYSTEM
-   CLERK + USERNAME + PASSWORD
-========================================= */
+/* ==========================================
+   HER SAFE ACCOUNT SYSTEM
+   CLERK VERSION  (rewritten)
 
-(function () {
+   This file is the ONLY place Clerk is
+   loaded. Do not add Clerk <script> tags
+   to your HTML pages as well, or Clerk
+   will load twice and the sign-up /
+   log-in windows will fail to open.
 
-    const CLERK_PUBLISHABLE_KEY =
-        "pk_test_anVzdC1tYWtvLTI4MzcuY2xlcmsuYWNjb3VudHMuZGV2JA";
-
-    const CLERK_SCRIPT =
-        "https://just-mako-2837.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js";
-
-    let clerkInstance = null;
-    let clerkLoading = null;
+   Just add this to every page:
+   <script src="hersafe-account.js"></script>
+========================================== */
 
 
-    /* =========================================
-       LOAD CLERK
-    ========================================= */
+/* ==========================================
+   YOUR CLERK SETTINGS
+========================================== */
 
-    function loadClerk() {
+const HERSAFE_CLERK_KEY =
+    "pk_test_anVzdC1tYWtvLTI4MzcuY2xlcmsuYWNjb3VudHMuZGV2JA";
 
-        if (clerkInstance) {
-            return Promise.resolve(clerkInstance);
-        }
+const HERSAFE_CLERK_DOMAIN =
+    "just-mako-2837.clerk.accounts.dev";
 
-        if (clerkLoading) {
-            return clerkLoading;
-        }
-
-        clerkLoading = new Promise(function (resolve, reject) {
-
-            function startClerk() {
-
-                if (!window.Clerk) {
-
-                    reject(
-                        new Error("Clerk could not be loaded.")
-                    );
-
-                    return;
-                }
-
-                try {
-
-                    clerkInstance =
-                        new window.Clerk(
-                            CLERK_PUBLISHABLE_KEY
-                        );
-
-                    clerkInstance.load()
-                        .then(function () {
-
-                            resolve(clerkInstance);
-
-                        })
-                        .catch(function (error) {
-
-                            console.error(
-                                "Clerk load error:",
-                                error
-                            );
-
-                            reject(error);
-
-                        });
-
-                } catch (error) {
-
-                    console.error(
-                        "Clerk initialization error:",
-                        error
-                    );
-
-                    reject(error);
-
-                }
-
-            }
+const HERSAFE_CLERK_SRC =
+    "https://" +
+    HERSAFE_CLERK_DOMAIN +
+    "/npm/@clerk/clerk-js@5/dist/clerk.browser.js";
 
 
-            if (window.Clerk) {
+let clerkReady = false;
 
-                startClerk();
-
-                return;
-
-            }
+let herSafeClerkPromise = null;
 
 
-            const script =
-                document.createElement("script");
+/* ==========================================
+   LOAD CLERK  (once only)
+========================================== */
 
-            script.src = CLERK_SCRIPT;
+function waitForClerk() {
 
-            script.async = true;
+    if (herSafeClerkPromise) {
 
-            script.crossOrigin = "anonymous";
+        return herSafeClerkPromise;
 
-
-            script.onload = function () {
-
-                startClerk();
-
-            };
+    }
 
 
-            script.onerror = function () {
+    herSafeClerkPromise = new Promise(
 
-                reject(
-                    new Error(
-                        "Could not load Clerk."
-                    )
+        function (resolve, reject) {
+
+            /*
+             * Step 1:
+             * make sure the Clerk script
+             * is on the page.
+             */
+
+            const alreadyThere =
+                document.querySelector(
+                    "script[data-clerk-publishable-key]"
                 );
 
-            };
+
+            if (!alreadyThere) {
+
+                const script =
+                    document.createElement("script");
+
+                script.setAttribute(
+                    "data-clerk-publishable-key",
+                    HERSAFE_CLERK_KEY
+                );
+
+                script.setAttribute(
+                    "crossorigin",
+                    "anonymous"
+                );
+
+                script.async = true;
+
+                script.src = HERSAFE_CLERK_SRC;
+
+                script.onerror = function () {
+
+                    reject(
+                        new Error(
+                            "The Clerk script could not be downloaded."
+                        )
+                    );
+
+                };
+
+                document.head.appendChild(script);
+
+            }
 
 
-            document.head.appendChild(script);
+            /*
+             * Step 2:
+             * wait until window.Clerk exists,
+             * then start it.
+             */
 
+            let attempts = 0;
+
+            const maxAttempts = 200;   // 20 seconds
+
+
+            const checkClerk = setInterval(
+
+                function () {
+
+                    attempts++;
+
+
+                    if (window.Clerk) {
+
+                        clearInterval(checkClerk);
+
+
+                        /*
+                         * IMPORTANT:
+                         * Clerk.load() is called with
+                         * NO options. The old
+                         * "ui: { ClerkUI: ... }" option
+                         * was what stopped the sign-up
+                         * and log-in windows opening.
+                         */
+
+                        window.Clerk
+                            .load()
+                            .then(function () {
+
+                                clerkReady = true;
+
+                                console.log(
+                                    "HerSafe Clerk account system loaded 💜"
+                                );
+
+                                resolve(window.Clerk);
+
+                            })
+                            .catch(function (error) {
+
+                                console.error(
+                                    "HerSafe Clerk load error:",
+                                    error
+                                );
+
+                                reject(error);
+
+                            });
+
+                        return;
+
+                    }
+
+
+                    if (attempts >= maxAttempts) {
+
+                        clearInterval(checkClerk);
+
+                        reject(
+                            new Error(
+                                "HerSafe could not find Clerk."
+                            )
+                        );
+
+                    }
+
+                },
+
+                100
+
+            );
+
+        }
+
+    );
+
+
+    return herSafeClerkPromise;
+
+}
+
+
+/* ==========================================
+   IS THE CLERK WINDOW ACTUALLY OPEN?
+========================================== */
+
+function clerkWindowIsOpen() {
+
+    return Boolean(
+
+        document.querySelector(
+            ".cl-modalBackdrop, .cl-modalContent, .cl-rootBox, .cl-card"
+        )
+
+    );
+
+}
+
+
+/* ==========================================
+   OPEN SIGN UP / SIGN IN
+   (modal first, inline form as backup)
+========================================== */
+
+async function openHerSafeAuth(mode) {
+
+    const clerk = await waitForClerk();
+
+
+    const fallbackBox =
+        document.getElementById("clerkMount");
+
+
+    /*
+     * Clerk sometimes resolves .load() a moment
+     * before its internal "client" object (the
+     * thing that actually knows how to open the
+     * sign-up / sign-in window) exists. Give it
+     * a few extra tries instead of crashing.
+     */
+
+    let waited = 0;
+
+    while (!clerk.client && waited < 3000) {
+
+        await new Promise(function (r) {
+            setTimeout(r, 150);
         });
 
-
-        return clerkLoading;
-
-    }
-
-
-    /* =========================================
-       WAIT FOR CLERK
-    ========================================= */
-
-    async function waitForClerk() {
-
-        return await loadClerk();
+        waited += 150;
 
     }
 
 
-    /* =========================================
-       SIGN UP
-    ========================================= */
-
-    async function signUp() {
-
-        try {
-
-            const clerk =
-                await waitForClerk();
-
-
-            if (clerk.isSignedIn) {
-
-                window.location.href =
-                    "https://hmxplayzzz000.github.io/homepage101.html";
-
-                return;
-
-            }
-
-
-            clerk.openSignUp({
-
-                forceRedirectUrl:
-                    "https://hmxplayzzz000.github.io/homepage101.html",
-
-                fallbackRedirectUrl:
-                    "https://hmxplayzzz000.github.io/homepage101.html"
-
-            });
-
-        } catch (error) {
-
-            console.error(
-                "HerSafe sign-up error:",
-                error
-            );
-
-            throw error;
-
-        }
-
-    }
-
-
-    /* =========================================
-       LOG IN
-    ========================================= */
-
-    async function logIn() {
-
-        try {
-
-            const clerk =
-                await waitForClerk();
-
-
-            if (clerk.isSignedIn) {
-
-                window.location.href =
-                    "https://hmxplayzzz000.github.io/homepage101.html";
-
-                return;
-
-            }
-
-
-            clerk.openSignIn({
-
-                forceRedirectUrl:
-                    "https://hmxplayzzz000.github.io/homepage101.html",
-
-                fallbackRedirectUrl:
-                    "https://hmxplayzzz000.github.io/homepage101.html"
-
-            });
-
-        } catch (error) {
-
-            console.error(
-                "HerSafe sign-in error:",
-                error
-            );
-
-            throw error;
-
-        }
-
-    }
-
-
-    /* =========================================
-       OLD AUTH FUNCTION
-    ========================================= */
-
-    async function openHerSafeAuth(mode) {
-
-        if (mode === "signup") {
-
-            await signUp();
-
-        } else {
-
-            await logIn();
-
-        }
-
-    }
-
-
-    /* =========================================
-       CURRENT USER
-    ========================================= */
-
-    async function currentUser() {
-
-        try {
-
-            const clerk =
-                await waitForClerk();
-
-            return clerk.user || null;
-
-        } catch (error) {
-
-            console.error(
-                "Could not get current user:",
-                error
-            );
-
-            return null;
-
-        }
-
-    }
-
-
-    /* =========================================
-       GET USERNAME
-    ========================================= */
-
-    async function getUsername() {
-
-        const user =
-            await currentUser();
-
-
-        if (!user) {
-
-            return null;
-
-        }
-
-
-        return (
-            user.username ||
-            user.primaryIdentifier?.identifier ||
-            null
+    if (!clerk.client) {
+
+        throw new Error(
+            "Clerk did not finish starting up (no client). " +
+            "This usually means sign-up / sign-in has no " +
+            "identifier enabled in the Clerk dashboard " +
+            "(User & authentication \u2192 Email, phone, username)."
         );
 
     }
 
 
-    /* =========================================
-       IS SIGNED IN
-    ========================================= */
+    /*
+     * Try the pop-up window first.
+     */
 
-    async function isSignedIn() {
+    try {
 
-        try {
+        if (mode === "signUp") {
 
-            const clerk =
-                await waitForClerk();
+            clerk.openSignUp({});
 
-            return !!clerk.isSignedIn;
+        } else {
 
-        } catch (error) {
-
-            return false;
+            clerk.openSignIn({});
 
         }
+
+    } catch (error) {
+
+        console.error(
+            "Clerk window error:",
+            error
+        );
+
+
+        throw error;
 
     }
 
 
-    /* =========================================
-       LOG OUT
-    ========================================= */
+    /*
+     * If the pop-up did not appear after
+     * 1.2 seconds, show the form directly
+     * inside the page instead.
+     */
 
-    async function logOut() {
+    return new Promise(function (resolve) {
 
-        try {
+        setTimeout(function () {
 
-            const clerk =
-                await waitForClerk();
+            if (clerkWindowIsOpen()) {
 
+                resolve("modal");
 
-            await clerk.signOut();
-
-
-            localStorage.removeItem(
-                "herSafeUsername"
-            );
-
-            localStorage.removeItem(
-                "herSafeQuizCompleted"
-            );
-
-            localStorage.removeItem(
-                "herSafeQuizScore"
-            );
-
-            localStorage.removeItem(
-                "herSafeQuizProgress"
-            );
-
-
-            window.location.href =
-                "https://hmxplayzzz000.github.io/homepage101.html";
-
-        } catch (error) {
-
-            console.error(
-                "HerSafe logout error:",
-                error
-            );
-
-        }
-
-    }
-
-
-    /* =========================================
-       SAVE QUIZ PROGRESS
-    ========================================= */
-
-    async function saveProgress(progress) {
-
-        try {
-
-            const clerk =
-                await waitForClerk();
-
-
-            if (!clerk.isSignedIn || !clerk.user) {
-
-                localStorage.setItem(
-                    "herSafeQuizProgress",
-                    JSON.stringify(progress)
-                );
-
-                return {
-                    success: false,
-                    localOnly: true
-                };
+                return;
 
             }
 
 
-            await clerk.user.update({
+            if (fallbackBox) {
 
-                unsafeMetadata: {
+                fallbackBox.innerHTML = "";
 
-                    quizProgress: progress
+                fallbackBox.style.display = "block";
+
+
+                if (mode === "signUp") {
+
+                    clerk.mountSignUp(fallbackBox);
+
+                } else {
+
+                    clerk.mountSignIn(fallbackBox);
 
                 }
 
-            });
+
+                fallbackBox.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
 
 
-            localStorage.setItem(
-                "herSafeQuizProgress",
-                JSON.stringify(progress)
-            );
+                resolve("inline");
 
-
-            return {
-                success: true
-            };
-
-
-        } catch (error) {
-
-            console.error(
-                "Could not save HerSafe progress:",
-                error
-            );
-
-
-            try {
-
-                localStorage.setItem(
-                    "herSafeQuizProgress",
-                    JSON.stringify(progress)
-                );
-
-            } catch (localError) {
-
-                console.error(
-                    "Local progress backup failed:",
-                    localError
-                );
+                return;
 
             }
 
 
-            return {
-                success: false,
-                error: error
-            };
+            resolve("failed");
 
-        }
+        }, 1200);
 
-    }
+    });
 
-
-    /* =========================================
-       LOAD QUIZ PROGRESS
-    ========================================= */
-
-    async function loadProgress() {
-
-        try {
-
-            const clerk =
-                await waitForClerk();
+}
 
 
-            if (
-                clerk.isSignedIn &&
-                clerk.user &&
-                clerk.user.unsafeMetadata &&
-                clerk.user.unsafeMetadata.quizProgress
-            ) {
+/* ==========================================
+   GET CURRENT USER
+========================================== */
 
-                return (
-                    clerk.user.unsafeMetadata.quizProgress
-                );
+async function currentUser() {
 
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Could not load online progress:",
-                error
-            );
-
-        }
+    const clerk = await waitForClerk();
 
 
-        try {
-
-            const saved =
-                localStorage.getItem(
-                    "herSafeQuizProgress"
-                );
-
-
-            if (saved) {
-
-                return JSON.parse(saved);
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Could not load local progress:",
-                error
-            );
-
-        }
-
+    if (!clerk || !clerk.user) {
 
         return null;
 
     }
 
 
-    /* =========================================
-       CLEAR QUIZ PROGRESS
-    ========================================= */
-
-    async function clearProgress() {
-
-        try {
-
-            const clerk =
-                await waitForClerk();
+    const user = clerk.user;
 
 
-            if (clerk.isSignedIn && clerk.user) {
-
-                await clerk.user.update({
-
-                    unsafeMetadata: {
-
-                        quizProgress: null
-
-                    }
-
-                });
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Could not clear online progress:",
-                error
-            );
-
-        }
+    const name =
+        user.username ||
+        (user.primaryEmailAddress
+            ? user.primaryEmailAddress.emailAddress
+            : null) ||
+        user.firstName ||
+        "HerSafe User";
 
 
-        localStorage.removeItem(
-            "herSafeQuizProgress"
-        );
+    return {
 
-        localStorage.removeItem(
-            "herSafeQuizCompleted"
-        );
+        id: user.id,
 
-        localStorage.removeItem(
-            "herSafeQuizScore"
-        );
+        username: name
 
-    }
+    };
+
+}
 
 
-    /* =========================================
-       USERNAME TAKEN
-    ========================================= */
+/* ==========================================
+   SIGN UP
+========================================== */
 
-    async function isUsernameTaken(username) {
+async function signUp() {
+
+    return openHerSafeAuth("signUp");
+
+}
+
+
+/* ==========================================
+   LOG IN
+========================================== */
+
+async function logIn() {
+
+    return openHerSafeAuth("signIn");
+
+}
+
+
+/* ==========================================
+   LOG OUT
+========================================== */
+
+async function logOut() {
+
+    const clerk = await waitForClerk();
+
+    await clerk.signOut();
+
+
+    console.log(
+        "HerSafe account signed out 💜"
+    );
+
+}
+
+
+/* ==========================================
+   CHECK USERNAME
+   (Clerk does this during sign-up)
+========================================== */
+
+async function isUsernameTaken(username) {
+
+    if (!username || !username.trim()) {
 
         return false;
 
     }
 
 
-    /* =========================================
-       UPDATE LOCAL USERNAME
-    ========================================= */
+    return false;
 
-    async function updateLocalUsername() {
-
-        try {
-
-            const username =
-                await getUsername();
+}
 
 
-            if (username) {
+/* ==========================================
+   SAVE QUIZ PROGRESS
+   Saved onto the Clerk account itself,
+   so it follows the user to any device.
+========================================== */
 
-                localStorage.setItem(
-                    "herSafeUsername",
-                    username
-                );
+async function saveProgress(progress) {
 
-            } else {
+    const clerk = await waitForClerk();
 
-                localStorage.removeItem(
-                    "herSafeUsername"
-                );
 
-            }
+    if (!clerk.user) {
 
-        } catch (error) {
+        console.log(
+            "No HerSafe account is signed in."
+        );
 
-            console.error(
-                "Could not update local username:",
-                error
-            );
-
-        }
+        return false;
 
     }
 
 
-    /* =========================================
-       START HERSAFE ACCOUNT
-    ========================================= */
+    try {
 
-    async function startHerSafeAccount() {
+        const existing =
+            clerk.user.unsafeMetadata || {};
+
+
+        await clerk.user.update({
+
+            unsafeMetadata: Object.assign(
+                {},
+                existing,
+                { quizProgress: progress }
+            )
+
+        });
+
 
         try {
 
-            const clerk =
-                await waitForClerk();
-
-
-            if (clerk.isSignedIn) {
-
-                await updateLocalUsername();
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "HerSafe account startup error:",
-                error
+            localStorage.setItem(
+                "hersafe_progress_" + clerk.user.id,
+                JSON.stringify(progress)
             );
 
+        } catch (storageError) {
+
+            /* private browsing - ignore */
+
         }
+
+
+        console.log(
+            "HerSafe quiz progress saved 💜"
+        );
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Could not save progress:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* ==========================================
+   LOAD QUIZ PROGRESS
+========================================== */
+
+async function loadProgress() {
+
+    const clerk = await waitForClerk();
+
+
+    if (!clerk.user) {
+
+        return null;
 
     }
 
 
-    /* =========================================
-       HERSAFE API
-    ========================================= */
-
-    window.HerSafe = {
-
-        waitForClerk,
-
-        openHerSafeAuth,
-
-        signUp,
-
-        logIn,
-
-        currentUser,
-
-        getUsername,
-
-        isSignedIn,
-
-        logOut,
-
-        saveProgress,
-
-        loadProgress,
-
-        clearProgress,
-
-        isUsernameTaken
-
-    };
+    const meta =
+        clerk.user.unsafeMetadata || {};
 
 
-    /* =========================================
-       START
-    ========================================= */
+    if (meta.quizProgress) {
 
-    startHerSafeAccount();
+        return meta.quizProgress;
 
-})();
+    }
+
+
+    try {
+
+        const saved = localStorage.getItem(
+            "hersafe_progress_" + clerk.user.id
+        );
+
+        return saved
+            ? JSON.parse(saved)
+            : null;
+
+    } catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+/* ==========================================
+   CLEAR QUIZ PROGRESS
+========================================== */
+
+async function clearProgress() {
+
+    const clerk = await waitForClerk();
+
+
+    if (!clerk.user) {
+
+        return false;
+
+    }
+
+
+    const existing =
+        clerk.user.unsafeMetadata || {};
+
+
+    const cleaned =
+        Object.assign({}, existing);
+
+    delete cleaned.quizProgress;
+
+
+    await clerk.user.update({
+        unsafeMetadata: cleaned
+    });
+
+
+    try {
+
+        localStorage.removeItem(
+            "hersafe_progress_" + clerk.user.id
+        );
+
+    } catch (error) {
+
+        /* ignore */
+
+    }
+
+
+    return true;
+
+}
+
+
+/* ==========================================
+   EXPOSE HER SAFE ACCOUNT SYSTEM
+========================================== */
+
+window.HerSafe = {
+
+    waitForClerk,
+
+    currentUser,
+
+    signUp,
+
+    logIn,
+
+    logOut,
+
+    isUsernameTaken,
+
+    saveProgress,
+
+    loadProgress,
+
+    clearProgress,
+
+    isReady: function () {
+        return clerkReady;
+    }
+
+};
+
+
+console.log(
+    "HerSafe account system is ready 💜"
+);
