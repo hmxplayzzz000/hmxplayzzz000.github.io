@@ -261,7 +261,6 @@ body::after {
     from {
         transform: scale(1);
     }
-
     to {
         transform: scale(1.3);
     }
@@ -273,7 +272,6 @@ body::after {
             0 0 10px #ff8de1,
             0 0 25px #ff4fc3;
     }
-
     to {
         text-shadow:
             0 0 20px #ffb8ed,
@@ -330,33 +328,24 @@ body::after {
     </section>
 
     <section id="result" class="card result">
-
         <h2>Quiz Complete! 💜</h2>
 
         <div id="resultScore" class="result-score"></div>
 
         <div id="resultMessage"></div>
 
-        <button
-            id="wrongAnswersButton"
-            class="main-button"
-            type="button">
+        <button id="wrongAnswersButton" class="main-button" type="button">
             See what answers you got wrong 💜
         </button>
 
         <div id="wrongReview" class="wrong-review"></div>
 
-        <button
-            id="homeButton"
-            class="main-button"
-            type="button">
+        <button id="homeButton" class="main-button" type="button">
             Continue to HerSafe 🏠
         </button>
-
     </section>
 
     <section id="accountSection" class="account-section">
-
         <div class="account-title">
             Save your HerSafe progress 💜
         </div>
@@ -366,27 +355,18 @@ body::after {
         </div>
 
         <div class="account-buttons">
-
-            <button
-                id="loginButton"
-                class="account-button"
-                type="button">
+            <button id="loginButton" class="account-button" type="button">
                 👤 Log In
             </button>
 
-            <button
-                id="createButton"
-                class="account-button"
-                type="button">
+            <button id="createButton" class="account-button" type="button">
                 💜 Create HerSafe Pass
             </button>
-
         </div>
 
         <div id="clerkMount"></div>
 
         <div id="accountStatus" class="account-status"></div>
-
     </section>
 
 </main>
@@ -614,16 +594,13 @@ function showWrongAnswers() {
             "<div class='wrong-item'>" +
             "🎉 You got every answer correct! 💜" +
             "</div>";
-
         return;
     }
 
-    review.innerHTML =
-        "<h3>Answers to look over:</h3>";
+    review.innerHTML = "<h3>Answers to look over:</h3>";
 
     wrongAnswers.forEach(function (item) {
         const itemElement = document.createElement("div");
-
         itemElement.className = "wrong-item";
 
         itemElement.innerHTML =
@@ -645,14 +622,9 @@ function showWrongAnswers() {
 ========================================== */
 
 async function openAuth(mode) {
-    const status =
-        document.getElementById("accountStatus");
-
-    const loginButton =
-        document.getElementById("loginButton");
-
-    const createButton =
-        document.getElementById("createButton");
+    const status = document.getElementById("accountStatus");
+    const loginButton = document.getElementById("loginButton");
+    const createButton = document.getElementById("createButton");
 
     status.textContent = "Opening HerSafe account... 💜";
 
