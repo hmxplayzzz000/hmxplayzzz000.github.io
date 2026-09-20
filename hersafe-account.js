@@ -139,10 +139,10 @@
 
 
     /* =========================================
-       OPEN SIGN UP
+       SIGN UP
     ========================================= */
 
-    async function openHerSafeSignUp() {
+    async function signUp() {
 
         try {
 
@@ -177,9 +177,7 @@
                 error
             );
 
-            alert(
-                "HerSafe Pass sign up could not open right now. Please try again."
-            );
+            throw error;
 
         }
 
@@ -187,10 +185,10 @@
 
 
     /* =========================================
-       OPEN SIGN IN
+       LOG IN
     ========================================= */
 
-    async function openHerSafeSignIn() {
+    async function logIn() {
 
         try {
 
@@ -225,9 +223,7 @@
                 error
             );
 
-            alert(
-                "HerSafe Pass sign in could not open right now. Please try again."
-            );
+            throw error;
 
         }
 
@@ -242,37 +238,13 @@
 
         if (mode === "signup") {
 
-            await openHerSafeSignUp();
+            await signUp();
 
         } else {
 
-            await openHerSafeSignIn();
+            await logIn();
 
         }
-
-    }
-
-
-    /* =========================================
-       SIGN UP
-       OLD FUNCTION NAME
-    ========================================= */
-
-    async function signUp() {
-
-        await openHerSafeSignUp();
-
-    }
-
-
-    /* =========================================
-       LOG IN
-       OLD FUNCTION NAME
-    ========================================= */
-
-    async function logIn() {
-
-        await openHerSafeSignIn();
 
     }
 
@@ -687,12 +659,6 @@
         waitForClerk,
 
         openHerSafeAuth,
-
-        openHerSafeSignIn,
-
-        openHerSafeSignUp,
-
-        /* OLD NAMES */
 
         signUp,
 
