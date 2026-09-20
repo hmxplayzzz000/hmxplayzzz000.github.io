@@ -341,7 +341,6 @@ body::after {
     transform: none;
 }
 
-
 /* ACCOUNT SECTION */
 
 .account-section {
@@ -428,8 +427,6 @@ body::after {
     line-height: 1.5;
 }
 
-/* Inline Clerk form fallback, same as the HerSafe Pass page */
-
 #clerkMount {
     display: none;
     margin-top: 18px;
@@ -439,7 +436,6 @@ body::after {
 #clerkMount.show {
     display: flex;
 }
-
 
 /* ANIMATIONS */
 
@@ -527,9 +523,6 @@ body::after {
         id="slogan">
     </div>
 
-
-    <!-- THE QUIZ ALWAYS APPEARS -->
-
     <div
         class="quiz-card"
         id="quizCard">
@@ -559,9 +552,6 @@ body::after {
         </div>
 
     </div>
-
-
-    <!-- QUIZ RESULT -->
 
     <div
         class="result"
@@ -601,9 +591,6 @@ body::after {
         </button>
 
     </div>
-
-
-    <!-- ACCOUNT SECTION -->
 
     <div
         class="account-section"
@@ -648,11 +635,7 @@ body::after {
 
         </div>
 
-
-        <!-- backup sign-up / log-in form, same as HerSafe Pass page -->
-
         <div id="clerkMount"></div>
-
 
         <div
             class="account-status"
@@ -663,13 +646,7 @@ body::after {
 
 </div>
 
-
-<!-- HER SAFE ACCOUNT SYSTEM -->
-
 <script src="hersafe-account.js"></script>
-
-
-<!-- QUIZ SCRIPT -->
 
 <script>
 
@@ -708,7 +685,6 @@ function typeSlogan() {
 }
 
 typeSlogan();
-
 
 /* =========================================
    QUESTIONS
@@ -788,7 +764,6 @@ const questions = [
 
 ];
 
-
 let currentQuestion = 0;
 
 let score = 0;
@@ -796,7 +771,6 @@ let score = 0;
 let wrongAnswers = [];
 
 let savedAnswers = {};
-
 
 /* =========================================
    LOAD QUESTION
@@ -866,7 +840,6 @@ function loadQuestion() {
 
 }
 
-
 /* =========================================
    SELECT ANSWER
 ========================================= */
@@ -886,7 +859,6 @@ async function selectAnswer(index) {
             button.disabled = true;
         }
     );
-
 
     savedAnswers[currentQuestion] = {
 
@@ -908,7 +880,6 @@ async function selectAnswer(index) {
             ]
 
     };
-
 
     if (
         index ===
@@ -950,9 +921,6 @@ async function selectAnswer(index) {
 
     }
 
-
-    /* SAVE ANSWER ONLINE IF LOGGED IN */
-
     try {
 
         const user =
@@ -981,7 +949,6 @@ async function selectAnswer(index) {
 
     }
 
-
     setTimeout(
         function() {
 
@@ -1006,7 +973,6 @@ async function selectAnswer(index) {
 
 }
 
-
 /* =========================================
    FINISH QUIZ
 ========================================= */
@@ -1021,7 +987,6 @@ async function finishQuiz() {
             ) * 100
         );
 
-
     savedAnswers._score =
         percentage;
 
@@ -1030,9 +995,6 @@ async function finishQuiz() {
 
     savedAnswers._correct =
         score;
-
-
-    /* SAVE COMPLETED QUIZ ONLINE IF LOGGED IN */
 
     try {
 
@@ -1068,9 +1030,6 @@ async function finishQuiz() {
 
     }
 
-
-    /* LOCAL BACKUP */
-
     localStorage.setItem(
         "herSafeQuizCompleted",
         "true"
@@ -1081,30 +1040,25 @@ async function finishQuiz() {
         percentage
     );
 
-
     document.getElementById(
         "quizCard"
     ).style.display =
         "none";
-
 
     document.getElementById(
         "accountSection"
     ).style.display =
         "none";
 
-
     document.getElementById(
         "result"
     ).style.display =
         "block";
 
-
     document.getElementById(
         "resultScore"
     ).textContent =
         percentage + "%";
-
 
     document.getElementById(
         "resultMessage"
@@ -1116,7 +1070,6 @@ async function finishQuiz() {
         " questions correct! 💜";
 
 }
-
 
 /* =========================================
    WRONG ANSWERS
@@ -1132,7 +1085,6 @@ window.showWrongAnswers = function() {
     review.style.display =
         "block";
 
-
     if (
         wrongAnswers.length === 0
     ) {
@@ -1146,10 +1098,8 @@ window.showWrongAnswers = function() {
 
     }
 
-
     review.innerHTML =
         "<h3>Answers to look over:</h3>";
-
 
     wrongAnswers.forEach(
         function(item) {
@@ -1176,7 +1126,6 @@ window.showWrongAnswers = function() {
 
 };
 
-
 /* =========================================
    GO HOME
 ========================================= */
@@ -1188,11 +1137,8 @@ window.goHome = function() {
 
 };
 
-
 /* =========================================
-   ACCOUNT SECTION
-   (same Clerk pop-up / inline-form pattern
-   as the HerSafe Pass page)
+   ACCOUNT BUTTONS
 ========================================= */
 
 const accountStatus =
@@ -1213,7 +1159,6 @@ const accountTitle =
 const accountText =
     document.getElementById("accountText");
 
-
 function showAccountStatus(message, isError) {
 
     accountStatus.textContent = message;
@@ -1225,220 +1170,31 @@ function showAccountStatus(message, isError) {
 
 }
 
-
-async function refreshAccountSection() {
-
-    let user = null;
-
-    try {
-
-        user =
-            await window.HerSafe.currentUser();
-
-    } catch (error) {
-
-        console.error(
-            "Could not check account:",
-            error
-        );
-
-    }
-
-
-    if (user) {
-
-        accountTitle.textContent =
-            "HerSafe Pass connected 💜";
-
-        accountText.textContent =
-            "Your quiz progress is being saved online to " +
-            user.username +
-            ".";
-
-        loginButton.style.display = "none";
-
-        createButton.style.display = "none";
-
-        clerkMount.classList.remove("show");
-
-        clerkMount.innerHTML = "";
-
-    } else {
-
-        accountTitle.textContent =
-            "Already have a HerSafe Pass? 💜";
-
-        accountText.textContent =
-            "Log in to save your quiz progress online " +
-            "and keep it with your account.";
-
-        loginButton.style.display = "inline-block";
-
-        createButton.style.display = "inline-block";
-
-    }
-
-}
-
-
 loginButton.addEventListener(
     "click",
-    async function () {
+    function () {
 
-        showAccountStatus("", false);
-
-        loginButton.disabled = true;
-
-
-        try {
-
-            const result =
-                await window.HerSafe.logIn();
-
-
-            if (result === "inline") {
-
-                clerkMount.classList.add("show");
-
-            }
-
-
-            if (result === "failed") {
-
-                showAccountStatus(
-                    "The login window could not open. Please refresh and try again. 💜",
-                    true
-                );
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "LOGIN ERROR:",
-                error
-            );
-
-            showAccountStatus(
-                "Login error: " +
-                    (error && error.message
-                        ? error.message
-                        : "unknown error") +
-                    " 💜",
-                true
-            );
-
-        }
-
-
-        loginButton.disabled = false;
+        window.location.href =
+            "managehersafepass.html?mode=login";
 
     }
 );
-
 
 createButton.addEventListener(
     "click",
-    async function () {
+    function () {
 
-        showAccountStatus("", false);
-
-        createButton.disabled = true;
-
-
-        try {
-
-            const result =
-                await window.HerSafe.signUp();
-
-
-            if (result === "inline") {
-
-                clerkMount.classList.add("show");
-
-            }
-
-
-            if (result === "failed") {
-
-                showAccountStatus(
-                    "The sign-up window could not open. Please refresh and try again. 💜",
-                    true
-                );
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "SIGN UP ERROR:",
-                error
-            );
-
-            showAccountStatus(
-                "Sign-up error: " +
-                    (error && error.message
-                        ? error.message
-                        : "unknown error") +
-                    " 💜",
-                true
-            );
-
-        }
-
-
-        createButton.disabled = false;
+        window.location.href =
+            "managehersafepass.html?mode=signup";
 
     }
 );
 
-
 /* =========================================
-   START QUIZ + ACCOUNT CHECK
+   START QUIZ
 ========================================= */
 
 loadQuestion();
-
-
-window.addEventListener(
-    "load",
-    async function () {
-
-        try {
-
-            const clerk =
-                await window.HerSafe.waitForClerk();
-
-
-            await refreshAccountSection();
-
-
-            if (
-                typeof clerk.addListener ===
-                "function"
-            ) {
-
-                clerk.addListener(
-                    function () {
-
-                        refreshAccountSection();
-
-                    }
-                );
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "HerSafe account system error:",
-                error
-            );
-
-        }
-
-    }
-);
 
 </script>
 
