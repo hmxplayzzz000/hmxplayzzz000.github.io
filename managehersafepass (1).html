@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HerSafe Pass 💜</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(255, 80, 180, 0.25),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 80% 70%,
+            rgba(140, 70, 255, 0.3),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #16001f,
+            #33004f,
+            #14001c
+        );
+
+    overflow-x: hidden;
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(70px);
+    z-index: -1;
+}
+
+body::before {
+    width: 250px;
+    height: 250px;
+    background: rgba(255, 0, 180, 0.18);
+    top: 10%;
+    left: -80px;
+}
+
+body::after {
+    width: 300px;
+    height: 300px;
+    background: rgba(120, 0, 255, 0.2);
+    bottom: -100px;
+    right: -80px;
+}
+
+.container {
+    width: 90%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 45px 0 100px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo {
+    font-size: 48px;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 10px #ff4fd8,
+        0 0 25px #b84dff,
+        0 0 45px #8c35ff;
+}
+
+.subtitle {
+    margin-top: 8px;
+    color: #e5c8ff;
+    font-size: 16px;
+}
+
+.card {
+    background: rgba(35, 0, 55, 0.75);
+
+    border: 1px solid rgba(255, 150, 255, 0.25);
+
+    border-radius: 22px;
+
+    padding: 28px;
+
+    margin-bottom: 22px;
+
+    box-shadow:
+        0 0 25px rgba(180, 60, 255, 0.15),
+        inset 0 0 20px rgba(255, 255, 255, 0.02);
+
+    backdrop-filter: blur(10px);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #ffb5ed;
+}
+
+.card p {
+    color: #ead9f5;
+    line-height: 1.6;
+}
+
+button {
+    width: 100%;
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 14px;
+
+    margin-top: 10px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #9d36ff,
+            #ff42c8
+        );
+
+    box-shadow:
+        0 0 18px rgba(210, 60, 255, 0.3);
+
+    transition:
+        transform 0.2s,
+        opacity 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+}
+
+.secondary-button {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+}
+
+.logout-button {
+    background:
+        linear-gradient(
+            135deg,
+            #7d247e,
+            #d52c9f
+        );
+}
+
+.status {
+    margin-top: 15px;
+
+    padding: 13px;
+
+    border-radius: 12px;
+
+    display: none;
+
+    line-height: 1.5;
+}
+
+.status.success {
+    display: block;
+
+    background:
+        rgba(60, 220, 150, 0.12);
+
+    border:
+        1px solid rgba(60, 220, 150, 0.35);
+
+    color: #a9ffd7;
+}
+
+.status.error {
+    display: block;
+
+    background:
+        rgba(255, 70, 100, 0.12);
+
+    border:
+        1px solid rgba(255, 70, 100, 0.35);
+
+    color: #ffb6c1;
+}
+
+.username-display {
+    font-size: 24px;
+
+    font-weight: bold;
+
+    color: #ffb5ed;
+
+    margin: 12px 0;
+
+    word-break: break-word;
+}
+
+.progress-box {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    width: 100%;
+
+    height: 15px;
+
+    background:
+        rgba(255, 255, 255, 0.1);
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 0%;
+
+    height: 100%;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #9d36ff,
+            #ff42c8
+        );
+
+    transition:
+        width 0.6s ease;
+}
+
+.progress-text {
+    margin-top: 10px;
+    color: #ead9f5;
+}
+
+
+/* CLERK FORM BOX (backup if pop-up is blocked) */
+
+#clerkMount {
+    display: none;
+
+    margin-top: 20px;
+
+    display: none;
+
+    justify-content: center;
+}
+
+#clerkMount.show {
+    display: flex;
+}
+
+
+/* LOADING */
+
+#loadingOverlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(150, 40, 255, 0.18),
+            transparent 35%
+        ),
+        rgba(15, 0, 25, 0.97);
+
+    transition:
+        opacity 0.4s ease,
+        visibility 0.4s ease;
+}
+
+#loadingOverlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loading-box {
+    text-align: center;
+    padding: 35px;
+}
+
+.loading-spinner {
+    width: 65px;
+
+    height: 65px;
+
+    margin:
+        0 auto 22px;
+
+    border-radius: 50%;
+
+    border:
+        5px solid rgba(255, 255, 255, 0.12);
+
+    border-top-color: #ff5bd7;
+
+    border-right-color: #a43cff;
+
+    animation:
+        spin 1s linear infinite;
+
+    box-shadow:
+        0 0 15px rgba(255, 80, 220, 0.4),
+        0 0 35px rgba(140, 50, 255, 0.25);
+}
+
+.loading-title {
+    font-size: 23px;
+
+    font-weight: bold;
+
+    color: #ffb5ed;
+
+    text-shadow:
+        0 0 12px rgba(255, 80, 220, 0.5);
+}
+
+.loading-text {
+    margin-top: 8px;
+
+    color: #d9c1e8;
+
+    font-size: 14px;
+}
+
+.loading-dots::after {
+    content: "";
+
+    animation:
+        dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+@keyframes dots {
+
+    0% {
+        content: "";
+    }
+
+    25% {
+        content: ".";
+    }
+
+    50% {
+        content: "..";
+    }
+
+    75%,
+    100% {
+        content: "...";
+    }
+
+}
+
+
+/* MENU */
+
+.menu-button {
+    position: fixed;
+
+    top: 20px;
+    left: 20px;
+
+    width: 50px;
+    height: 50px;
+
+    margin: 0;
+    padding: 0;
+
+    border-radius: 14px;
+
+    font-size: 24px;
+
+    z-index: 100;
+}
+
+.menu {
+    position: fixed;
+
+    top: 80px;
+    left: 20px;
+
+    width: 220px;
+
+    background:
+        rgba(30, 0, 45, 0.96);
+
+    border:
+        1px solid rgba(255, 150, 255, 0.25);
+
+    border-radius: 18px;
+
+    padding: 12px;
+
+    display: none;
+
+    z-index: 99;
+
+    box-shadow:
+        0 0 25px rgba(180, 60, 255, 0.3);
+}
+
+.menu.show {
+    display: block;
+}
+
+.menu a {
+    display: block;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 13px;
+
+    border-radius: 10px;
+
+    margin-bottom: 4px;
+}
+
+.menu a:hover {
+    background:
+        rgba(255, 255, 255, 0.08);
+}
+
+#loggedInSection {
+    display: none;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .container {
+        width: 92%;
+        padding-top: 80px;
+    }
+
+    .logo {
+        font-size: 38px;
+    }
+
+    .card {
+        padding: 22px;
+    }
+
+}
+
+</style>
+
+
+<!--
+    HER SAFE ACCOUNT SYSTEM
+    This file loads Clerk for us.
+    Do NOT add Clerk script tags here too.
+-->
+
+<script src="hersafe-account.js"></script>
+
+</head>
+
+
+<body>
+
+
+<!-- LOADING SCREEN -->
+
+<div id="loadingOverlay">
+
+    <div class="loading-box">
+
+        <div class="loading-spinner"></div>
+
+        <div class="loading-title">
+            Loading HerSafe Pass 💜
+        </div>
+
+        <div class="loading-text">
+            Connecting to your account
+            <span class="loading-dots"></span>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MENU -->
+
+<button
+    class="menu-button"
+    id="menuButton"
+    type="button">
+
+    ☰
+
+</button>
+
+
+<div
+    class="menu"
+    id="menu">
+
+    <a href="homepage101.html">
+        🏠 Home
+    </a>
+
+    <a href="hersafeai.html">
+        🤖 HerSafe AI
+    </a>
+
+    <a href="introduction.html">
+        📚 Learn & Quiz
+    </a>
+
+    <a href="managehersafepass.html">
+        👤 HerSafe Pass
+    </a>
+
+</div>
+
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="logo">
+            HerSafe 💜
+        </div>
+
+        <div class="subtitle">
+            Your HerSafe Pass
+        </div>
+
+    </div>
+
+
+    <!-- NOT LOGGED IN -->
+
+    <div
+        class="card"
+        id="accountSection">
+
+        <h2>
+            👤 HerSafe Pass
+        </h2>
+
+        <p>
+            Create a HerSafe Pass to save your quiz progress online
+            and keep your progress available when you log in.
+        </p>
+
+
+        <button
+            id="createButton"
+            type="button">
+
+            Create HerSafe Pass 💜
+
+        </button>
+
+
+        <button
+            id="loginButton"
+            type="button"
+            class="secondary-button">
+
+            Log In
+
+        </button>
+
+
+        <!-- backup sign-up / log-in form -->
+
+        <div id="clerkMount"></div>
+
+
+        <div
+            id="accountStatus"
+            class="status">
+        </div>
+
+    </div>
+
+
+    <!-- LOGGED IN -->
+
+    <div
+        class="card"
+        id="loggedInSection">
+
+        <h2>
+            💜 Your HerSafe Pass
+        </h2>
+
+        <p>
+            You are logged in as:
+        </p>
+
+
+        <div
+            class="username-display"
+            id="currentUsername">
+
+            Loading...
+
+        </div>
+
+
+        <div class="progress-box">
+
+            <h3>
+                📚 Quiz Progress
+            </h3>
+
+
+            <div class="progress-bar">
+
+                <div
+                    class="progress-fill"
+                    id="progressFill">
+                </div>
+
+            </div>
+
+
+            <div
+                class="progress-text"
+                id="progressText">
+
+                Quiz progress will appear here.
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="logoutButton"
+            class="logout-button"
+            type="button">
+
+            Sign Out
+
+        </button>
+
+
+        <div
+            id="loggedInStatus"
+            class="status">
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==========================================
+   HER SAFE PASS  (page code)
+========================================== */
+
+let herSafeClerk = null;
+
+
+/* ==========================================
+   MENU
+========================================== */
+
+const menuButton =
+    document.getElementById("menuButton");
+
+const menu =
+    document.getElementById("menu");
+
+menuButton.addEventListener(
+    "click",
+    function () {
+
+        menu.classList.toggle("show");
+
+    }
+);
+
+
+/* ==========================================
+   ELEMENTS
+========================================== */
+
+const loadingOverlay =
+    document.getElementById("loadingOverlay");
+
+const accountSection =
+    document.getElementById("accountSection");
+
+const loggedInSection =
+    document.getElementById("loggedInSection");
+
+const currentUsername =
+    document.getElementById("currentUsername");
+
+const progressText =
+    document.getElementById("progressText");
+
+const progressFill =
+    document.getElementById("progressFill");
+
+const accountStatus =
+    document.getElementById("accountStatus");
+
+const loggedInStatus =
+    document.getElementById("loggedInStatus");
+
+const createButton =
+    document.getElementById("createButton");
+
+const loginButton =
+    document.getElementById("loginButton");
+
+const logoutButton =
+    document.getElementById("logoutButton");
+
+const clerkMount =
+    document.getElementById("clerkMount");
+
+
+/* ==========================================
+   STATUS
+========================================== */
+
+function showStatus(
+    element,
+    message,
+    type
+) {
+
+    element.textContent = message;
+
+    element.className =
+        "status " + type;
+
+}
+
+
+function clearStatus(element) {
+
+    element.textContent = "";
+
+    element.className = "status";
+
+}
+
+
+/* ==========================================
+   LOADING
+========================================== */
+
+function hideLoading() {
+
+    loadingOverlay.classList.add("hidden");
+
+}
+
+
+/*
+ * Safety net: never leave the user
+ * stuck on the loading screen.
+ */
+
+setTimeout(hideLoading, 12000);
+
+
+/* ==========================================
+   ACCOUNT DISPLAY
+========================================== */
+
+function showLoggedOut() {
+
+    accountSection.style.display = "block";
+
+    loggedInSection.style.display = "none";
+
+}
+
+
+function showLoggedIn() {
+
+    accountSection.style.display = "none";
+
+    loggedInSection.style.display = "block";
+
+
+    clerkMount.classList.remove("show");
+
+    clerkMount.innerHTML = "";
+
+}
+
+
+/* ==========================================
+   UPDATE ACCOUNT
+========================================== */
+
+async function updateAccountData() {
+
+    if (!herSafeClerk) {
+        return;
+    }
+
+
+    if (!herSafeClerk.user) {
+
+        showLoggedOut();
+
+        return;
+
+    }
+
+
+    showLoggedIn();
+
+
+    const user =
+        await window.HerSafe.currentUser();
+
+
+    currentUsername.textContent =
+        user
+            ? user.username
+            : "HerSafe User";
+
+
+    /* quiz progress */
+
+    let progress = null;
+
+    try {
+
+        progress =
+            await window.HerSafe.loadProgress();
+
+    } catch (error) {
+
+        console.error(
+            "Progress error:",
+            error
+        );
+
+    }
+
+
+    if (
+        progress &&
+        typeof progress.total === "number" &&
+        progress.total > 0
+    ) {
+
+        const done =
+            Number(progress.completed) || 0;
+
+        const percent =
+            Math.min(
+                100,
+                Math.round((done / progress.total) * 100)
+            );
+
+
+        progressFill.style.width =
+            percent + "%";
+
+        progressText.textContent =
+            done +
+            " of " +
+            progress.total +
+            " completed (" +
+            percent +
+            "%) 💜";
+
+    } else {
+
+        progressFill.style.width = "0%";
+
+        progressText.textContent =
+            "No quiz progress saved yet. Take a quiz to get started 💜";
+
+    }
+
+}
+
+
+/* ==========================================
+   START CLERK
+========================================== */
+
+window.addEventListener(
+    "load",
+    async function () {
+
+        console.log(
+            "Starting HerSafe Pass..."
+        );
+
+
+        if (
+            typeof window.HerSafe === "undefined"
+        ) {
+
+            console.error(
+                "hersafe-account.js did not load. " +
+                "Check that it is uploaded to the same " +
+                "folder as this page, and that the " +
+                "<script src=\"hersafe-account.js\"> " +
+                "path is correct."
+            );
+
+
+            hideLoading();
+
+
+            showStatus(
+                accountStatus,
+
+                "HerSafe Pass could not start (missing account script). Please try again later. 💜",
+
+                "error"
+            );
+
+
+            return;
+
+        }
+
+
+        try {
+
+            herSafeClerk =
+                await window.HerSafe.waitForClerk();
+
+
+            console.log(
+                "Clerk loaded successfully 💜"
+            );
+
+
+            hideLoading();
+
+
+            await updateAccountData();
+
+
+            if (
+                typeof herSafeClerk.addListener ===
+                "function"
+            ) {
+
+                herSafeClerk.addListener(
+                    function () {
+
+                        updateAccountData();
+
+                    }
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "HER SAFE CLERK ERROR:",
+                error
+            );
+
+
+            hideLoading();
+
+
+            showStatus(
+                accountStatus,
+
+                "HerSafe Pass could not connect. Please refresh the page and try again. 💜",
+
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   CREATE ACCOUNT
+========================================== */
+
+createButton.addEventListener(
+    "click",
+    async function () {
+
+        clearStatus(accountStatus);
+
+        createButton.disabled = true;
+
+
+        try {
+
+            const result =
+                await window.HerSafe.signUp();
+
+
+            if (result === "inline") {
+
+                clerkMount.classList.add("show");
+
+            }
+
+
+            if (result === "failed") {
+
+                showStatus(
+                    accountStatus,
+
+                    "The sign-up window could not open. Please refresh the page and try again. 💜",
+
+                    "error"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "SIGN UP ERROR:",
+                error
+            );
+
+
+            showStatus(
+                accountStatus,
+
+                "Sign-up error: " +
+                    (error && error.message
+                        ? error.message
+                        : "unknown error") +
+                    " 💜",
+
+                "error"
+            );
+
+        }
+
+
+        createButton.disabled = false;
+
+    }
+);
+
+
+/* ==========================================
+   LOGIN
+========================================== */
+
+loginButton.addEventListener(
+    "click",
+    async function () {
+
+        clearStatus(accountStatus);
+
+        loginButton.disabled = true;
+
+
+        try {
+
+            const result =
+                await window.HerSafe.logIn();
+
+
+            if (result === "inline") {
+
+                clerkMount.classList.add("show");
+
+            }
+
+
+            if (result === "failed") {
+
+                showStatus(
+                    accountStatus,
+
+                    "The login window could not open. Please refresh the page and try again. 💜",
+
+                    "error"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "SIGN IN ERROR:",
+                error
+            );
+
+
+            showStatus(
+                accountStatus,
+
+                "Login error: " +
+                    (error && error.message
+                        ? error.message
+                        : "unknown error") +
+                    " 💜",
+
+                "error"
+            );
+
+        }
+
+
+        loginButton.disabled = false;
+
+    }
+);
+
+
+/* ==========================================
+   SIGN OUT
+========================================== */
+
+logoutButton.addEventListener(
+    "click",
+    async function () {
+
+        try {
+
+            await window.HerSafe.logOut();
+
+            await updateAccountData();
+
+        } catch (error) {
+
+            console.error(
+                "SIGN OUT ERROR:",
+                error
+            );
+
+
+            showStatus(
+                loggedInStatus,
+
+                "Could not sign out right now. Please try again. 💜",
+
+                "error"
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
