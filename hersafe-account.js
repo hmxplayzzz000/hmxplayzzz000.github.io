@@ -80,8 +80,6 @@
             }
 
 
-            /* If Clerk is already loaded */
-
             if (window.Clerk) {
 
                 startClerk();
@@ -90,8 +88,6 @@
 
             }
 
-
-            /* Load Clerk */
 
             const script =
                 document.createElement("script");
@@ -143,7 +139,7 @@
 
 
     /* =========================================
-       OPEN CLERK SIGN UP
+       OPEN SIGN UP
     ========================================= */
 
     async function openHerSafeSignUp() {
@@ -153,10 +149,11 @@
             const clerk =
                 await waitForClerk();
 
+
             if (clerk.isSignedIn) {
 
                 window.location.href =
-                    "homepage101.html";
+                    "https://hmxplayzzz000.github.io/homepage101.html";
 
                 return;
 
@@ -181,7 +178,7 @@
             );
 
             alert(
-                "HerSafe Pass could not open right now. Please try again."
+                "HerSafe Pass sign up could not open right now. Please try again."
             );
 
         }
@@ -190,7 +187,7 @@
 
 
     /* =========================================
-       OPEN CLERK SIGN IN
+       OPEN SIGN IN
     ========================================= */
 
     async function openHerSafeSignIn() {
@@ -200,10 +197,11 @@
             const clerk =
                 await waitForClerk();
 
+
             if (clerk.isSignedIn) {
 
                 window.location.href =
-                    "homepage101.html";
+                    "https://hmxplayzzz000.github.io/homepage101.html";
 
                 return;
 
@@ -228,7 +226,7 @@
             );
 
             alert(
-                "HerSafe Pass could not open right now. Please try again."
+                "HerSafe Pass sign in could not open right now. Please try again."
             );
 
         }
@@ -237,8 +235,7 @@
 
 
     /* =========================================
-       OLD FUNCTION NAME
-       KEPT SO YOUR OTHER PAGES STILL WORK
+       OLD AUTH FUNCTION
     ========================================= */
 
     async function openHerSafeAuth(mode) {
@@ -252,6 +249,30 @@
             await openHerSafeSignIn();
 
         }
+
+    }
+
+
+    /* =========================================
+       SIGN UP
+       OLD FUNCTION NAME
+    ========================================= */
+
+    async function signUp() {
+
+        await openHerSafeSignUp();
+
+    }
+
+
+    /* =========================================
+       LOG IN
+       OLD FUNCTION NAME
+    ========================================= */
+
+    async function logIn() {
+
+        await openHerSafeSignIn();
 
     }
 
@@ -291,6 +312,7 @@
 
         const user =
             await currentUser();
+
 
         if (!user) {
 
@@ -341,6 +363,7 @@
             const clerk =
                 await waitForClerk();
 
+
             await clerk.signOut();
 
 
@@ -362,7 +385,7 @@
 
 
             window.location.href =
-                "homepage101.html";
+                "https://hmxplayzzz000.github.io/homepage101.html";
 
         } catch (error) {
 
@@ -433,8 +456,6 @@
             );
 
 
-            /* Backup locally */
-
             try {
 
                 localStorage.setItem(
@@ -496,8 +517,6 @@
 
         }
 
-
-        /* Local backup */
 
         try {
 
@@ -581,18 +600,9 @@
 
     /* =========================================
        USERNAME TAKEN
-       ========================================= */
+    ========================================= */
 
     async function isUsernameTaken(username) {
-
-        /*
-           Clerk checks username availability
-           during its own sign-up process.
-
-           We therefore let Clerk handle this
-           rather than pretending every username
-           is available.
-        */
 
         return false;
 
@@ -639,7 +649,7 @@
 
 
     /* =========================================
-       STARTUP
+       START HERSAFE ACCOUNT
     ========================================= */
 
     async function startHerSafeAccount() {
@@ -669,7 +679,7 @@
 
 
     /* =========================================
-       EXPOSE HERSAFE API
+       HERSAFE API
     ========================================= */
 
     window.HerSafe = {
@@ -681,6 +691,12 @@
         openHerSafeSignIn,
 
         openHerSafeSignUp,
+
+        /* OLD NAMES */
+
+        signUp,
+
+        logIn,
 
         currentUser,
 
