@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HerSafe 💜</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background:
+        radial-gradient(circle at 20% 20%, #ffb6e6 0%, transparent 30%),
+        radial-gradient(circle at 80% 80%, #b98cff 0%, transparent 30%),
+        linear-gradient(135deg, #f8d8ff, #eadcff, #ffd9f2);
+    overflow-x: hidden;
+}
+
+/* =========================
+   WELCOME LOCK
+========================= */
+
+#welcome-lock {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    pointer-events: all;
+}
+
+/* =========================
+   WELCOME OVERLAY
+========================= */
+
+.welcome-overlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at center, rgba(255, 132, 219, 0.35), transparent 40%),
+        linear-gradient(135deg, #160020, #310044, #170024);
+
+    transition: opacity 0.7s ease;
+}
+
+/* =========================
+   WELCOME CARD
+========================= */
+
+.welcome-card {
+    width: 90%;
+    max-width: 700px;
+
+    padding: 50px 35px;
+
+    text-align: center;
+
+    border-radius: 35px;
+
+    background: rgba(255, 255, 255, 0.12);
+
+    border: 2px solid rgba(255, 255, 255, 0.25);
+
+    backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.2),
+        0 0 50px rgba(207, 78, 255, 0.6),
+        inset 0 0 30px rgba(255, 255, 255, 0.08);
+
+    animation: cardAppear 1s ease;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* =========================
+   HEART
+========================= */
+
+.heart {
+    font-size: 75px;
+
+    margin-bottom: 15px;
+
+    animation: heartGlow 2s ease-in-out infinite alternate;
+
+    filter:
+        drop-shadow(0 0 10px #ffffff)
+        drop-shadow(0 0 25px #ff69c7)
+        drop-shadow(0 0 45px #c84cff);
+}
+
+@keyframes heartGlow {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.12);
+    }
+}
+
+/* =========================
+   TITLE
+========================= */
+
+#welcome-title {
+    min-height: 55px;
+
+    font-size: 40px;
+
+    color: white;
+
+    text-shadow:
+        0 0 5px #ffffff,
+        0 0 15px #ff69c7,
+        0 0 30px #c84cff;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+#welcome-message {
+    min-height: 150px;
+
+    margin: 20px auto;
+
+    max-width: 600px;
+
+    font-size: 19px;
+
+    line-height: 1.7;
+
+    color: #fceaff;
+
+    text-shadow: 0 0 8px rgba(255,255,255,0.5);
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+#start-button {
+    display: none;
+
+    border: none;
+
+    padding: 16px 35px;
+
+    border-radius: 35px;
+
+    background: linear-gradient(
+        135deg,
+        #c84cff,
+        #ff69c7
+    );
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 10px #d86cff,
+        0 0 25px #ff69c7,
+        0 0 45px rgba(200, 76, 255, 0.7);
+
+    transition: 0.3s ease;
+}
+
+#start-button:hover {
+    transform: scale(1.08);
+
+    box-shadow:
+        0 0 15px white,
+        0 0 35px #d86cff,
+        0 0 60px #ff69c7;
+}
+
+#start-button:active {
+    transform: scale(0.96);
+}
+
+/* =========================
+   EXIT ANIMATION
+========================= */
+
+.exit-card {
+    animation: cardExit 0.7s ease forwards;
+}
+
+@keyframes cardExit {
+    to {
+        opacity: 0;
+        transform: scale(0.75) translateY(-30px);
+    }
+}
+
+.welcome-overlay.exit {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* =========================
+   MAIN PAGE
+========================= */
+
+.main-page {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 40px;
+}
+
+.main-page h1 {
+    color: #70258f;
+
+    font-size: 45px;
+
+    text-shadow:
+        0 0 10px white,
+        0 0 25px #d86cff;
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     WELCOME LOCK
+========================= -->
+
+<div id="welcome-lock">
+
+    <div class="welcome-overlay">
+
+        <div class="welcome-card">
+
+            <div class="heart">
+                💜
+            </div>
+
+            <h1 id="welcome-title"></h1>
+
+            <p id="welcome-message"></p>
+
+            <button id="start-button" onclick="startWebsite()">
+                LET'S LEARN ✨
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MAIN PAGE
+========================= -->
+
+<div class="main-page">
+
+    <h1>
+        Welcome to HerSafe 💜
+    </h1>
+
+</div>
+
+
+<script>
+
+/* =========================
+   TEXT
+========================= */
+
+const titleText =
+    "Welcome to HerSafe 💜";
+
+const messageText =
+    "This website was created by Holly Mitchell to help people learn more about leg and knee injuries in football. Explore reliable, science-informed information, play fun scientifically based games, and learn how to better understand, prevent and protect against injuries.";
+
+
+/* =========================
+   TYPEWRITER
+========================= */
+
+function typeWriter(element, text, speed, callback) {
+
+    let i = 0;
+
+    element.innerHTML = "";
+
+    function type() {
+
+        if (i < text.length) {
+
+            element.innerHTML += text.charAt(i);
+
+            i++;
+
+            setTimeout(type, speed);
+
+        } else {
+
+            if (callback) {
+                callback();
+            }
+
+        }
+
+    }
+
+    type();
+}
+
+
+/* =========================
+   START TYPEWRITER
+========================= */
+
+window.addEventListener("load", function() {
+
+    const title =
+        document.getElementById("welcome-title");
+
+    const message =
+        document.getElementById("welcome-message");
+
+    const button =
+        document.getElementById("start-button");
+
+
+    typeWriter(
+        title,
+        titleText,
+        60,
+        function() {
+
+            typeWriter(
+                message,
+                messageText,
+                25,
+                function() {
+
+                    button.style.display = "inline-block";
+
+                }
+            );
+
+        }
+    );
+
+});
+
+
+/* =========================
+   START WEBSITE
+========================= */
+
+function startWebsite() {
+
+    const button =
+        document.getElementById("start-button");
+
+    const overlay =
+        document.querySelector(".welcome-overlay");
+
+    const card =
+        document.querySelector(".welcome-card");
+
+
+    /* Prevent multiple clicks */
+
+    button.disabled = true;
+
+
+    /* Play exit animation */
+
+    card.classList.add("exit-card");
+
+
+    setTimeout(function() {
+
+        overlay.classList.add("exit");
+
+    }, 150);
+
+
+    /*
+       AFTER THE POPUP CLOSES,
+       GO TO THE NEW INTRODUCTION PAGE
+    */
+
+    setTimeout(function() {
+
+        window.location.href = "introduction.html";
+
+    }, 850);
+
+}
+
+</script>
+
+</body>
+</html>
