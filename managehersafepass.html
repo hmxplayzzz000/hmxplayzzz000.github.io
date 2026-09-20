@@ -95,13 +95,9 @@ body::after {
 
 .card {
     background: rgba(35, 0, 55, 0.75);
-
     border: 1px solid rgba(255, 150, 255, 0.25);
-
     border-radius: 22px;
-
     padding: 28px;
-
     margin-bottom: 22px;
 
     box-shadow:
@@ -123,21 +119,13 @@ body::after {
 
 button {
     width: 100%;
-
     border: none;
-
     border-radius: 14px;
-
     padding: 14px;
-
     margin-top: 10px;
-
     font-size: 16px;
-
     font-weight: bold;
-
     cursor: pointer;
-
     color: white;
 
     background:
@@ -181,13 +169,9 @@ button:disabled {
 
 .status {
     margin-top: 15px;
-
     padding: 13px;
-
     border-radius: 12px;
-
     display: none;
-
     line-height: 1.5;
 }
 
@@ -217,13 +201,9 @@ button:disabled {
 
 .username-display {
     font-size: 24px;
-
     font-weight: bold;
-
     color: #ffb5ed;
-
     margin: 12px 0;
-
     word-break: break-word;
 }
 
@@ -233,22 +213,18 @@ button:disabled {
 
 .progress-bar {
     width: 100%;
-
     height: 15px;
 
     background:
         rgba(255, 255, 255, 0.1);
 
     border-radius: 20px;
-
     overflow: hidden;
 }
 
 .progress-fill {
     width: 0%;
-
     height: 100%;
-
     border-radius: 20px;
 
     background:
@@ -272,9 +248,7 @@ button:disabled {
 
 #clerkMount {
     display: none;
-
     margin-top: 20px;
-
     justify-content: center;
 }
 
@@ -287,15 +261,11 @@ button:disabled {
 
 #loadingOverlay {
     position: fixed;
-
     inset: 0;
-
     z-index: 9999;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     background:
@@ -324,7 +294,6 @@ button:disabled {
 
 .loading-spinner {
     width: 65px;
-
     height: 65px;
 
     margin:
@@ -336,7 +305,6 @@ button:disabled {
         5px solid rgba(255, 255, 255, 0.12);
 
     border-top-color: #ff5bd7;
-
     border-right-color: #a43cff;
 
     animation:
@@ -349,9 +317,7 @@ button:disabled {
 
 .loading-title {
     font-size: 23px;
-
     font-weight: bold;
-
     color: #ffb5ed;
 
     text-shadow:
@@ -360,9 +326,7 @@ button:disabled {
 
 .loading-text {
     margin-top: 8px;
-
     color: #d9c1e8;
-
     font-size: 14px;
 }
 
@@ -374,11 +338,9 @@ button:disabled {
 }
 
 @keyframes spin {
-
     to {
         transform: rotate(360deg);
     }
-
 }
 
 @keyframes dots {
@@ -499,10 +461,6 @@ button:disabled {
 
 </style>
 
-
-<!-- HER SAFE ACCOUNT SYSTEM -->
-<script src="hersafe-account.js?v=3"></script>
-
 </head>
 
 
@@ -619,8 +577,6 @@ button:disabled {
         </button>
 
 
-        <!-- backup sign-up / log-in form -->
-
         <div id="clerkMount"></div>
 
 
@@ -707,7 +663,62 @@ button:disabled {
 <script>
 
 /* ==========================================
-   HER SAFE PASS  (page code)
+   FORCE LOAD THE CURRENT ACCOUNT SCRIPT
+========================================== */
+
+(function () {
+
+    const script = document.createElement("script");
+
+    script.src =
+        "hersafe-account.js?fresh=" +
+        Date.now();
+
+    script.async = false;
+
+    script.onload = function () {
+
+        console.log(
+            "HerSafe account script loaded 💜"
+        );
+
+    };
+
+    script.onerror = function () {
+
+        console.error(
+            "Could not load hersafe-account.js"
+        );
+
+        const status =
+            document.getElementById("accountStatus");
+
+        const loading =
+            document.getElementById("loadingOverlay");
+
+        if (loading) {
+            loading.classList.add("hidden");
+        }
+
+        if (status) {
+
+            status.textContent =
+                "HerSafe Pass could not load. Please check that hersafe-account.js is uploaded to GitHub. 💜";
+
+            status.className =
+                "status error";
+
+        }
+
+    };
+
+    document.head.appendChild(script);
+
+})();
+
+
+/* ==========================================
+   HER SAFE PASS
 ========================================== */
 
 let herSafeClerk = null;
@@ -811,13 +822,10 @@ function hideLoading() {
 
 }
 
-
-/*
- * Safety net: never leave the user
- * stuck on the loading screen.
- */
-
-setTimeout(hideLoading, 12000);
+setTimeout(
+    hideLoading,
+    12000
+);
 
 
 /* ==========================================
@@ -838,7 +846,6 @@ function showLoggedIn() {
     accountSection.style.display = "none";
 
     loggedInSection.style.display = "block";
-
 
     clerkMount.classList.remove("show");
 
@@ -880,8 +887,6 @@ async function updateAccountData() {
             : "HerSafe User";
 
 
-    /* quiz progress */
-
     let progress = null;
 
     try {
@@ -911,7 +916,9 @@ async function updateAccountData() {
         const percent =
             Math.min(
                 100,
-                Math.round((done / progress.total) * 100)
+                Math.round(
+                    (done / progress.total) * 100
+                )
             );
 
 
@@ -956,11 +963,7 @@ window.addEventListener(
         ) {
 
             console.error(
-                "hersafe-account.js did not load. " +
-                "Check that it is uploaded to the same " +
-                "folder as this page, and that the " +
-                "<script src=\"hersafe-account.js\"> " +
-                "path is correct."
+                "window.HerSafe does not exist."
             );
 
 
@@ -970,7 +973,37 @@ window.addEventListener(
             showStatus(
                 accountStatus,
 
-                "HerSafe Pass could not start (missing account script). Please try again later. 💜",
+                "HerSafe Pass could not start. The account system did not load. 💜",
+
+                "error"
+            );
+
+
+            return;
+
+        }
+
+
+        /* EXTRA CHECK */
+
+        if (
+            typeof window.HerSafe.signUp !==
+            "function"
+        ) {
+
+            console.error(
+                "window.HerSafe exists, but signUp is missing.",
+                window.HerSafe
+            );
+
+
+            hideLoading();
+
+
+            showStatus(
+                accountStatus,
+
+                "The HerSafe account system loaded an old version. Please refresh and try again. 💜",
 
                 "error"
             );
@@ -1053,28 +1086,21 @@ createButton.addEventListener(
 
         try {
 
-            const result =
-                await window.HerSafe.signUp();
+            if (
+                typeof window.HerSafe ===
+                "undefined" ||
+                typeof window.HerSafe.signUp !==
+                "function"
+            ) {
 
-
-            if (result === "inline") {
-
-                clerkMount.classList.add("show");
-
-            }
-
-
-            if (result === "failed") {
-
-                showStatus(
-                    accountStatus,
-
-                    "The sign-up window could not open. Please refresh the page and try again. 💜",
-
-                    "error"
+                throw new Error(
+                    "HerSafe sign-up function is not available."
                 );
 
             }
+
+
+            await window.HerSafe.signUp();
 
         } catch (error) {
 
@@ -1088,9 +1114,12 @@ createButton.addEventListener(
                 accountStatus,
 
                 "Sign-up error: " +
-                    (error && error.message
-                        ? error.message
-                        : "unknown error") +
+                    (
+                        error &&
+                        error.message
+                            ? error.message
+                            : "unknown error"
+                    ) +
                     " 💜",
 
                 "error"
@@ -1120,28 +1149,21 @@ loginButton.addEventListener(
 
         try {
 
-            const result =
-                await window.HerSafe.logIn();
+            if (
+                typeof window.HerSafe ===
+                "undefined" ||
+                typeof window.HerSafe.logIn !==
+                "function"
+            ) {
 
-
-            if (result === "inline") {
-
-                clerkMount.classList.add("show");
-
-            }
-
-
-            if (result === "failed") {
-
-                showStatus(
-                    accountStatus,
-
-                    "The login window could not open. Please refresh the page and try again. 💜",
-
-                    "error"
+                throw new Error(
+                    "HerSafe login function is not available."
                 );
 
             }
+
+
+            await window.HerSafe.logIn();
 
         } catch (error) {
 
@@ -1155,9 +1177,12 @@ loginButton.addEventListener(
                 accountStatus,
 
                 "Login error: " +
-                    (error && error.message
-                        ? error.message
-                        : "unknown error") +
+                    (
+                        error &&
+                        error.message
+                            ? error.message
+                            : "unknown error"
+                    ) +
                     " 💜",
 
                 "error"
